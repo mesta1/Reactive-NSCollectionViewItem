@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -80,7 +81,17 @@ namespace ReactiveUI
             remove => WeakEventManager<INotifyPropertyChanged, PropertyChangedEventHandler, PropertyChangedEventArgs>.RemoveHandler(this, value);
         }
 
-        /// <inheritdoc />
+        public override void ViewDidAppear()
+        {
+            base.ViewDidAppear();
+            _activated.OnNext(Unit.Default);
+        }
+
+        public override void ViewDidDisappear()
+        {
+            base.ViewDidDisappear();
+            _deactivated.OnNext(Unit.Default);                
+        }
 
 
         /// <inheritdoc/>

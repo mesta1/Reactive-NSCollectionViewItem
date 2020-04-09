@@ -8,6 +8,7 @@ using System.Reactive.Subjects;
 using System.Reactive.Disposables;
 using Foundation;
 using AppKit;
+using System.Diagnostics;
 
 namespace ReactiveCollectionView
 {
@@ -47,6 +48,7 @@ namespace ReactiveCollectionView
 
         public void UpdateUI()
         {
+            Debug.WriteLine($"Loaded {ViewModel.Name}");
             _disposables?.Dispose();
             _disposables = new CompositeDisposable();
             this.Bind(ViewModel, vm => vm.Checked, v => v._check.State, _check.ObservableActivated(),
@@ -55,6 +57,14 @@ namespace ReactiveCollectionView
 
             this.OneWayBind(ViewModel, vm => vm.Name, v => v._check.Title)
               .DisposeWith(_disposables);
+
+            Deactivated
+               .Take(1)
+               .Subscribe(_ =>
+               {
+                   _disposables.Dispose();
+                   Debug.WriteLine($"Unloaded {ViewModel.Name}");
+               });
         }
 
         protected override void Dispose(bool disposing)
@@ -74,29 +84,6 @@ namespace ReactiveCollectionView
                 .FromEventPattern<EventHandler, EventArgs>(
                     h => button.Activated += h, h => button.Activated -= h)
                 .Select(_ => Unit.Default);
-        }
-
-        public static IObservable<Unit> ObservableTextChanged(this NSTextField textField)
-        {
-            var ret = new Subject<Unit>();
-            textField.Delegate =
-                new BlockDidChangeTextFieldDelegate(() => ret.OnNext(Unit.Default));
-            return ret;
-        }
-
-        private class BlockDidChangeTextFieldDelegate : NSTextFieldDelegate
-        {
-            private readonly Action block;
-
-            public BlockDidChangeTextFieldDelegate(Action block)
-            {
-                this.block = block;
-            }
-
-            public override void Changed(NSNotification notification)
-            {
-                block();
-            }
-        }
+        }       
     }
 }

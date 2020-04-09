@@ -34,7 +34,11 @@ namespace ReactiveCollectionView
             datasource.Data = new System.Collections.Generic.List<ItemViewModel> {
                 new ItemViewModel { Name = "Test1", Checked=true },
                 new ItemViewModel { Name = "Test2" , Checked =false},
-                new ItemViewModel { Name = "Test3" , Checked = true} };
+                new ItemViewModel { Name = "Test3" , Checked = true},
+                new ItemViewModel { Name = "Test4" , Checked = true},
+                new ItemViewModel { Name = "Test5" , Checked = true},
+                new ItemViewModel { Name = "Test6" , Checked = true},
+                new ItemViewModel { Name = "Test7" , Checked = true}};
             _collectionView.ReloadData();
             // Do any additional setup after loading the view.
         }
